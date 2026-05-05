@@ -50,7 +50,16 @@ class RegistrationController extends Controller
             'ticket_id' => Str::uuid(),
         ]);
 
-        Mail::to(auth()->user()->email)->send(new RegistrationConfirmed($registration));
+        // Send Ticket Confirmation Email after the response is sent
+        dispatch(function () use ($registration) {
+            try {
+                \Illuminate\Support\Facades\Log::info('Attempting to send ticket confirmation to: ' . auth()->user()->email);
+                Mail::to(auth()->user()->email)->send(new RegistrationConfirmed($registration));
+                \Illuminate\Support\Facades\Log::info('Ticket confirmation sent successfully to: ' . auth()->user()->email);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Ticket confirmation failed: ' . $e->getMessage());
+            }
+        })->afterResponse();
 
         return redirect()->route('registrations.index')->with('success', 'Registration successful! Here is your ticket.');
     }

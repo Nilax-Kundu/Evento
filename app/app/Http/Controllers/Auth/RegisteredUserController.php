@@ -50,8 +50,16 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        // Send Welcome Email
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        // Send Welcome Email after the response is sent to the browser
+        dispatch(function () use ($user) {
+            try {
+                \Illuminate\Support\Facades\Log::info('Attempting to send welcome email to: ' . $user->email);
+                Mail::to($user->email)->send(new WelcomeMail($user));
+                \Illuminate\Support\Facades\Log::info('Welcome email sent successfully to: ' . $user->email);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Welcome email failed: ' . $e->getMessage());
+            }
+        })->afterResponse();
 
         return match ($user->role) {
             'organizer' => redirect()->route('organizer.dashboard'),
