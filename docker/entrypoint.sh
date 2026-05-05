@@ -10,6 +10,11 @@ fi
 chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Clear cache and config
+echo "Clearing config..."
+php artisan config:clear
+php artisan cache:clear
+
 # Database Setup
 echo "Running migrations..."
 php artisan migrate --force

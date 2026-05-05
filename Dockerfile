@@ -41,9 +41,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# Optimizations
-RUN php artisan config:cache && php artisan route:cache
-
 # Copy Nginx configuration
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 
