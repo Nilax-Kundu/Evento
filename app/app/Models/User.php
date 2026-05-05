@@ -58,7 +58,13 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         dispatch(function () use ($token) {
-            $this->notify(new \App\Notifications\ResetPassword($token));
+            try {
+                \Illuminate\Support\Facades\Log::info('Attempting to send password reset email to: ' . $this->email);
+                $this->notify(new \App\Notifications\ResetPassword($token));
+                \Illuminate\Support\Facades\Log::info('Password reset email sent successfully to: ' . $this->email);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Password reset email failed: ' . $e->getMessage());
+            }
         })->afterResponse();
     }
 }
