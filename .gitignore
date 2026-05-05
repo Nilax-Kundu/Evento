@@ -1,0 +1,16 @@
+/app/.env
+/app/.env.*
+/app/node_modules
+/app/vendor
+/app/public/build
+/app/public/storage
+/app/storage/*.key
+/app/storage/framework/cache/data/*
+/app/storage/framework/sessions/*
+/app/storage/framework/views/*
+/app/storage/logs/*
+
+/docs
+.DS_Store
+.vscode
+.idea
