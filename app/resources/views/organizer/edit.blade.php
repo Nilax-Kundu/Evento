@@ -103,7 +103,7 @@
                             @if($event->image)
                                 <div class="mt-2 mb-3">
                                     <span class="text-sm text-gray-600 block mb-1">Current Image:</span>
-                                    <img src="{{ asset('storage/' . $event->image) }}" alt="Current Event Image" class="h-32 object-cover rounded border border-gray-200">
+                                    <img src="{{ filter_var($event->image, FILTER_VALIDATE_URL) ? $event->image : asset('storage/' . $event->image) }}" alt="Current Event Image" class="h-32 object-cover rounded border border-gray-200">
                                 </div>
                             @endif
                             <input id="image" class="block mt-1 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" type="file" name="image" accept="image/*" />

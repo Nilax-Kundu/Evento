@@ -67,7 +67,7 @@
                         <div class="bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-md transition duration-150">
                             <div class="relative h-48 bg-gray-100">
                                 @if($event->image)
-                                    <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
+                                    <img src="{{ filter_var($event->image, FILTER_VALIDATE_URL) ? $event->image : asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full bg-slate-50 flex items-center justify-center">
                                         <svg class="h-16 w-16 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">

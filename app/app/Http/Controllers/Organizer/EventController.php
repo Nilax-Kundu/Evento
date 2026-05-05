@@ -7,8 +7,16 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+use Cloudinary\Cloudinary;
+
 class EventController extends Controller
 {
+    private function uploadToCloudinary($file)
+    {
+        $cloudinary = new Cloudinary(env('CLOUDINARY_URL'));
+        return $cloudinary->uploadApi()->upload($file->getRealPath())['secure_url'];
+    }
+
     public function dashboard()
     {
         $events = auth()->user()->events()->withCount('registrations')->orderBy('created_at', 'desc')->get();
@@ -59,7 +67,7 @@ class EventController extends Controller
         $eventData = $validated;
         
         if ($request->hasFile('image')) {
-            $eventData['image'] = $request->file('image')->store('events', 'public');
+            $eventData['image'] = $this->uploadToCloudinary($request->file('image'));
         }
 
         $eventData['status'] = 'pending';
@@ -112,11 +120,7 @@ class EventController extends Controller
         $eventData = $validated;
         
         if ($request->hasFile('image')) {
-            // Delete old image if it exists
-            if ($event->image) {
-                Storage::disk('public')->delete($event->image);
-            }
-            $eventData['image'] = $request->file('image')->store('events', 'public');
+            $eventData['image'] = $this->uploadToCloudinary($request->file('image'));
         } else {
             // Retain old image
             $eventData['image'] = $event->image;

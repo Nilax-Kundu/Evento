@@ -62,7 +62,7 @@
                     @if($event->image)
                         <div class="mb-8">
                             <h3 class="text-lg font-medium text-slate-900 mb-2">Event Image</h3>
-                            <img src="{{ asset('storage/' . $event->image) }}" alt="Event image" class="max-w-full h-auto max-h-64 object-cover rounded-md border border-slate-200">
+                            <img src="{{ filter_var($event->image, FILTER_VALIDATE_URL) ? $event->image : asset('storage/' . $event->image) }}" alt="Event image" class="max-w-full h-auto max-h-64 object-cover rounded-md border border-slate-200">
                         </div>
                     @endif
 

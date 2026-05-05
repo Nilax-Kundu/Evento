@@ -29,7 +29,7 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 @if($event->image)
-                    <img src="{{ asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-64 object-cover">
+                    <img src="{{ filter_var($event->image, FILTER_VALIDATE_URL) ? $event->image : asset('storage/' . $event->image) }}" alt="{{ $event->title }}" class="w-full h-64 object-cover">
                 @else
                     <div class="w-full h-64 bg-slate-50 flex items-center justify-center">
                         <span class="text-slate-200 text-5xl font-bold">Event Image</span>
