@@ -25,10 +25,10 @@ class EventController extends Controller
             abort(404);
         }
 
-        $start = \Carbon\Carbon::parse($event->date->format('Y-m-d') . ' ' . $event->time->format('H:i:s'), 'UTC');
+        $start = \Carbon\Carbon::parse($event->date->format('Y-m-d') . ' ' . $event->time->format('H:i:s'));
         $end = (clone $start)->addHours(2);
 
-        $format = 'Ymd\THis\Z';
+        $format = 'Ymd\THis';
         
         $summary = str_replace([",", ";"], ["\\,", "\\;"], $event->title);
         $description = str_replace(["\r\n", "\r", "\n"], "\\n", $event->description);

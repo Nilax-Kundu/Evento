@@ -75,7 +75,7 @@
 
                             <!-- Fee -->
                             <div>
-                                <x-input-label for="registration_fee" :value="__('Registration Fee ($)')" />
+                                <x-input-label for="registration_fee" :value="__('Registration Fee (₹)')" />
                                 <x-text-input id="registration_fee" class="block mt-1 w-full" type="number" step="0.01" min="0" name="registration_fee" :value="old('registration_fee')" placeholder="Leave empty for free" />
                                 <x-input-error :messages="$errors->get('registration_fee')" class="mt-2" />
                             </div>

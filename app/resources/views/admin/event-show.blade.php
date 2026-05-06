@@ -54,7 +54,7 @@
                                 <li><strong>Start:</strong> {{ $event->registration_start->format('M d, Y g:i A') }}</li>
                                 <li><strong>End:</strong> {{ $event->registration_end->format('M d, Y g:i A') }}</li>
                                 <li><strong>Capacity:</strong> {{ $event->max_participants }} participants</li>
-                                <li><strong>Fee:</strong> {{ $event->registration_fee ? '$' . number_format($event->registration_fee, 2) : 'Free' }}</li>
+                                <li><strong>Fee:</strong> {{ $event->registration_fee ? '₹' . number_format($event->registration_fee, 2) : 'Free' }}</li>
                             </ul>
                         </div>
                     </div>

@@ -116,7 +116,7 @@
                             
                             <div class="p-5 pt-0 mt-auto">
                                 <div class="flex justify-between items-center mb-3 text-xs font-medium text-slate-500">
-                                    <span>{{ $event->registration_fee ? '$' . number_format($event->registration_fee, 2) : 'Free Entry' }}</span>
+                                    <span>{{ $event->registration_fee ? '₹' . number_format($event->registration_fee, 2) : 'Free Entry' }}</span>
                                     <span class="text-teal-700">{{ max(0, $event->max_participants - $event->registrations()->count()) }} seats left</span>
                                 </div>
                                 <a href="{{ route('events.show', $event) }}" class="block w-full text-center bg-teal-700 hover:bg-teal-600 text-white font-medium py-2.5 rounded-lg text-sm transition duration-150">

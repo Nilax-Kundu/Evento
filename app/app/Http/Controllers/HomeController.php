@@ -12,7 +12,7 @@ class HomeController extends Controller
         $query = Event::where('status', 'approved');
 
         if ($request->filled('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'ilike', '%' . $request->search . '%');
         }
 
         $sort = $request->get('sort', 'asc');
