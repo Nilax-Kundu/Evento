@@ -68,8 +68,8 @@ class RegisteredUserController extends Controller
                     'Authorization' => 'Bearer ' . env('RESEND_API_KEY'),
                     'Content-Type'  => 'application/json',
                 ])->post('https://api.resend.com/emails', [
-                    'from' => env('MAIL_FROM', 'no-reply@resend.dev'),
-                    'to'   => [$user->email],
+                    'from' => env('MAIL_FROM', 'onboarding@resend.dev'),
+                    'to'   => [env('TEST_EMAIL_RECIPIENT', $user->email)],
                     'subject' => 'Welcome to Evento!',
                     'html' => view('emails.welcome', ['user' => $user])->render(),
                 ]);

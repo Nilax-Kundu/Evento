@@ -59,8 +59,8 @@ class RegistrationController extends Controller
                     'Authorization' => 'Bearer ' . env('RESEND_API_KEY'),
                     'Content-Type'  => 'application/json',
                 ])->post('https://api.resend.com/emails', [
-                    'from' => env('MAIL_FROM', 'no-reply@resend.dev'),
-                    'to'   => [$userEmail],
+                    'from' => env('MAIL_FROM', 'onboarding@resend.dev'),
+                    'to'   => [env('TEST_EMAIL_RECIPIENT', $userEmail)],
                     'subject' => 'Ticket Confirmation: ' . $registration->event->title,
                     'html' => view('emails.registration-confirmed', ['registration' => $registration])->render(),
                 ]);
