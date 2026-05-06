@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
@@ -57,13 +60,37 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        dispatch(function () use ($token) {
+        $user = $this;
+        dispatch(function () use ($token, $user) {
             try {
-                \Illuminate\Support\Facades\Log::info('Attempting to send password reset email to: ' . $this->email);
-                $this->notify(new \App\Notifications\ResetPassword($token));
-                \Illuminate\Support\Facades\Log::info('Password reset email sent successfully to: ' . $this->email);
+                Log::info('Attempting to send password reset email to: ' . $user->email . ' via Resend');
+
+                $url = url(route('password.reset', [
+                    'token' => $token,
+                    'email' => $user->getEmailForPasswordReset(),
+                ], false));
+
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . env('RESEND_API_KEY'),
+                    'Content-Type'  => 'application/json',
+                ])->post('https://api.resend.com/emails', [
+                    'from' => env('MAIL_FROM', 'no-reply@resend.dev'),
+                    'to'   => [$user->email],
+                    'subject' => 'Reset Your Password - Evento',
+                    'html' => view('emails.reset-password', [
+                        'url' => $url,
+                        'name' => $user->name,
+                        'count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
+                    ])->render(),
+                ]);
+
+                if ($response->successful()) {
+                    Log::info('Password reset email sent successfully to: ' . $user->email);
+                } else {
+                    Log::error('Resend failed for reset: ' . $response->status() . ' - ' . $response->body());
+                }
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Password reset email failed: ' . $e->getMessage());
+                Log::error('Resend failed for reset with exception: ' . $e->getMessage());
             }
         })->afterResponse();
     }

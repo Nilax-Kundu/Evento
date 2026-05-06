@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\RegistrationConfirmed;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationController extends Controller
 {
@@ -50,14 +49,29 @@ class RegistrationController extends Controller
             'ticket_id' => Str::uuid(),
         ]);
 
-        // Send Ticket Confirmation Email after the response is sent
-        dispatch(function () use ($registration) {
+        // Send Ticket Confirmation Email after the response is sent via Resend API
+        $userEmail = auth()->user()->email;
+        dispatch(function () use ($registration, $userEmail) {
             try {
-                \Illuminate\Support\Facades\Log::info('Attempting to send ticket confirmation to: ' . auth()->user()->email);
-                Mail::to(auth()->user()->email)->send(new RegistrationConfirmed($registration));
-                \Illuminate\Support\Facades\Log::info('Ticket confirmation sent successfully to: ' . auth()->user()->email);
+                Log::info('Attempting to send ticket confirmation to: ' . $userEmail . ' via Resend');
+
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . env('RESEND_API_KEY'),
+                    'Content-Type'  => 'application/json',
+                ])->post('https://api.resend.com/emails', [
+                    'from' => env('MAIL_FROM', 'no-reply@resend.dev'),
+                    'to'   => [$userEmail],
+                    'subject' => 'Ticket Confirmation: ' . $registration->event->title,
+                    'html' => view('emails.registration-confirmed', ['registration' => $registration])->render(),
+                ]);
+
+                if ($response->successful()) {
+                    Log::info('Ticket confirmation sent successfully to: ' . $userEmail);
+                } else {
+                    Log::error('Resend failed for ticket: ' . $response->status() . ' - ' . $response->body());
+                }
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Ticket confirmation failed: ' . $e->getMessage());
+                Log::error('Resend failed for ticket with exception: ' . $e->getMessage());
             }
         })->afterResponse();
 
