@@ -48,7 +48,7 @@ class EventController extends Controller
             'max_participants'   => 'required|integer|min:1|max:1000',
             'registration_start' => 'required|date|after_or_equal:now',
             'registration_end'   => 'required|date|after:registration_start',
-            'registration_fee'   => 'nullable|numeric|min:0|max:10000',
+            'registration_fee'   => 'nullable|numeric|gt:0|max:10000',
             'image'              => 'nullable|image',
         ]);
 
@@ -101,7 +101,7 @@ class EventController extends Controller
             'max_participants'   => 'required|integer|min:1|max:1000',
             'registration_start' => 'required|date|after_or_equal:now',
             'registration_end'   => 'required|date|after:registration_start',
-            'registration_fee'   => 'nullable|numeric|min:0|max:10000',
+            'registration_fee'   => 'nullable|numeric|gt:0|max:10000',
             'image'              => 'nullable|image',
         ]);
 
